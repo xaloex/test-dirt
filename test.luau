@@ -5,12 +5,17 @@ local _KEY="\240\175\251\172\236\192\45\17\56\236\179\251\178\34\241\145\243\84\
 local _CS=2765046689
 (function(_D,_K,_C)
 if not(_C and type(_C)=="number")then return end
+local _strbyte = (string and string.byte) or function(s,i) return s:byte(i) end
+local _strchar = (string and string.char) or function(c) return "" end
+local _ldexp = (math and math.ldexp) or function(m,e) return m * (2^e) end
+local _huge = (math and math.huge) or (1/0)
+local _clock = (os and os.clock) or tick or (function() return 0 end)
 local _data={}
-for _i=1,#_D do _data[_i]=_D:byte(_i)end
+for _i=1,#_D do _data[_i]=_strbyte(_D,_i)end
 local _key={}
-for _i=1,#_K do _key[_i]=_K:byte(_i)end
-local _t=os.clock();local _x=0;for _i=1,10000 do _x=_x+_i end
-if os.clock()-_t>0.1 then return end
+for _i=1,#_K do _key[_i]=_strbyte(_K,_i)end
+local _t=_clock();local _x=0;for _i=1,10000 do _x=_x+_i end
+if _clock()-_t>0.5 then return end
 local _h=0x811c9dc5
 for _i=1,#_data do
 _h=((_h*0x01000193)%0x100000000)~_data[_i]
@@ -40,14 +45,14 @@ local _sg=math.floor(_b8/128)%2
 local _ex=(_b8%128)*16+math.floor(_b7/16)
 local _mn=(_b7%16)*(2^48)+_bs[6]*(2^40)+_bs[5]*(2^32)+_bs[4]*(2^24)+_bs[3]*(2^16)+_bs[2]*(2^8)+_bs[1]
 local _v
-if _ex==0 then _v=math.ldexp(_mn/(2^52),-1022)
-elseif _ex==2047 then _v=_mn~=0 and 0/0 or math.huge
-else _v=math.ldexp((_mn/(2^52))+1,_ex-1023)end
+if _ex==0 then _v=_ldexp(_mn/(2^52),-1022)
+elseif _ex==2047 then _v=_mn~=0 and 0/0 or _huge
+else _v=_ldexp((_mn/(2^52))+1,_ex-1023)end
 _r3623[_i]=_sg==1 and -_v or _v
 elseif _t==3 then
 local _sl=_r6069()
 local _sb={}
-for _j=1,_sl do _sb[_j]=string.char(_data83c5()~_key[((_ci+_j+4)%32)+1])end
+for _j=1,_sl do _sb[_j]=_strchar(_data83c5()~_key[((_ci+_j+4)%32)+1])end
 _r3623[_i]=_tmpca98(_sb)
 end
 end
