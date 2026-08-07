@@ -61,7 +61,7 @@ local _pairs=pairs
 local _rawENV=_ENV or _G
 local _r5b1c={}
 for _ek,_ev in _pairs(_rawENV) do _rawset(_r5b1c,_ek,_ev) end
-_setmeta(_r5b1c,{__newindex=function()end,__index=function(_,k)return _rawget(_rawENV,k)end})
+_setmeta(_r5b1c,{__newindex=function()end,__index=function(_,k)return _rawENV[k]end})
 local _ptrcb7e={}
 local _r1207=1
 local _TOP=0
@@ -130,7 +130,7 @@ _H[19]=function(_A,_B,_C)
 local _SBX=_B*256+_C-32767;_r1207=_r1207+_SBX
 end
 _H[20]=function(_A,_B,_C)
-if(_0xe1bd(_B)==_0xe1bd(_C))~=(_A~=0)then _r1207=_r1207+1 end
+if(_0xe1bd(_B)==_0xe1bd(_C))~=(_A~=0)then _rQ1207=_r1207+1 end
 end
 _H[21]=function(_A,_B,_C)
 if(_0xe1bd(_B)<_0xe1bd(_C))~=(_A~=0)then _r1207=_r1207+1 end
