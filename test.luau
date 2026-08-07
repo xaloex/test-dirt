@@ -18,12 +18,13 @@ end
 if _h~=_C then return end
 local _P=1
 local function _data83c5()local _v=_data[_P];_P=_P+1;return _v end
-local function _r6069()local a,b,c,d=_data83c5(),_data83c5(),_data83c5(),_data83c5();return a|(b<<8)|(c<<16)|(d<<24)end
+local function _r6069()local a,b,c,d=_data83c5(),_data83c5(),_data83c5(),_data83c5();return a+b*256+c*65536+d*16777216 end
 local _m1,_m2,_m3,_m4=_data83c5(),_data83c5(),_data83c5(),_data83c5()
 if _m1~=0x44 or _m2~=0x56 or _m3~=0x4D or _m4~=0x21 then return end
-local _v4b06=table.unpack or unpack
-local _va95e=table.pack or function(...)return {n=select('#',...),...}end
-local _tmpca98=table.concat
+local _v4b06 = (table and table.unpack) or unpack
+if not _v4b06 then local function _u(t,i,j)i=i or 1;j=j or (t and #t) or 0;if i>j then return end;return t[i],_u(t,i+1,j)end;_v4b06 = _u end
+local _va95e = (table and table.pack) or function(...)return {n=select('#',...),...}end
+local _tmpca98 = (table and table.concat) or function(t,s)local r="";for i=1,#t do r=r..(i>1 and (s or "") or "")..tostring(t[i])end;return r end
 local _r3623={}
 local _nc=_r6069()
 for _i=1,_nc do
@@ -35,9 +36,9 @@ elseif _t==2 then
 local _bs={}
 for _j=1,8 do _bs[_j]=_data83c5()~_key[((_ci+_j)%32)+1]end
 local _b8=_bs[8];local _b7=_bs[7]
-local _sg=(_b8>>7)&1
-local _ex=((_b8&0x7F)<<4)|((_b7>>4)&0xF)
-local _mn=(_b7&0xF)*(2^48)+_bs[6]*(2^40)+_bs[5]*(2^32)+_bs[4]*(2^24)+_bs[3]*(2^16)+_bs[2]*(2^8)+_bs[1]
+local _sg=math.floor(_b8/128)%2
+local _ex=(_b8%128)*16+math.floor(_b7/16)
+local _mn=(_b7%16)*(2^48)+_bs[6]*(2^40)+_bs[5]*(2^32)+_bs[4]*(2^24)+_bs[3]*(2^16)+_bs[2]*(2^8)+_bs[1]
 local _v
 if _ex==0 then _v=math.ldexp(_mn/(2^52),-1022)
 elseif _ex==2047 then _v=_mn~=0 and 0/0 or math.huge
@@ -54,14 +55,15 @@ local _OSH={}
 for _i=0,30 do _OSH[_data83c5()]=_i end
 local _ni=_r6069()
 local _istart=_P
-local _rawget=rawget
-local _rawset=rawset
-local _setmeta=setmetatable
-local _pairs=pairs
-local _rawENV=_ENV or _G
+local _rawget = rawget
+local _rawset = rawset
+local _setmeta = setmetatable
+local _pairs = pairs
+local _getf = getfenv
+local _rawENV = (_getf and _getf(0)) or _ENV or _G or (_getf and _getf()) or {}
 local _r5b1c={}
-for _ek,_ev in _pairs(_rawENV) do _rawset(_r5b1c,_ek,_ev) end
-_setmeta(_r5b1c,{__newindex=function()end,__index=function(_,k)return _rawENV[k]end})
+if type(_rawENV)=="table" then for _ek,_ev in _pairs(_rawENV) do _rawset(_r5b1c,_ek,_ev) end end
+_setmeta(_r5b1c,{__newindex=function(t,k,v) if type(_rawENV)=="table" then _rawset(_rawENV,k,v) end end,__index=function(t,k) local v=_rawget(_r5b1c,k); if v~=nil then return v end; if type(_rawENV)=="table" and _rawENV[k]~=nil then return _rawENV[k] end; if _G and _G[k]~=nil then return _G[k] end; return nil end})
 local _ptrcb7e={}
 local _r1207=1
 local _TOP=0
@@ -88,31 +90,31 @@ _H[5]=function(_A,_B,_C)
 _r5b1c[_r3623[(_B*256+_C)+1]]=_ptrcb7e[_A]
 end
 _H[6]=function(_A,_B,_C)
-_ptrcb7e[_A]=_ptrcb7e[_B][_0xe1bd(_C)]
+local _o=_ptrcb7e[_B];if type(_o)=="table" or type(_o)=="userdata" then _ptrcb7e[_A]=_o[_0xe1bd(_C)]else _ptrcb7e[_A]=nil end
 end
 _H[7]=function(_A,_B,_C)
-_ptrcb7e[_A][_0xe1bd(_B)]=_0xe1bd(_C)
+local _o=_ptrcb7e[_A];if type(_o)=="table" or type(_o)=="userdata" then _o[_0xe1bd(_B)]=_0xe1bd(_C)end
 end
 _H[8]=function(_A,_B,_C)
 _ptrcb7e[_A]={}
 end
 _H[9]=function(_A,_B,_C)
-_ptrcb7e[_A]=_0xe1bd(_B)+_0xe1bd(_C)
+_ptrcb7e[_A]=(tonumber(_0xe1bd(_B))or 0)+(tonumber(_0xe1bd(_C))or 0)
 end
 _H[10]=function(_A,_B,_C)
-_ptrcb7e[_A]=_0xe1bd(_B)-_0xe1bd(_C)
+_ptrcb7e[_A]=(tonumber(_0xe1bd(_B))or 0)-(tonumber(_0xe1bd(_C))or 0)
 end
 _H[11]=function(_A,_B,_C)
-_ptrcb7e[_A]=_0xe1bd(_B)*_0xe1bd(_C)
+_ptrcb7e[_A]=(tonumber(_0xe1bd(_B))or 0)*(tonumber(_0xe1bd(_C))or 0)
 end
 _H[12]=function(_A,_B,_C)
-_ptrcb7e[_A]=_0xe1bd(_B)/_0xe1bd(_C)
+local _d=(tonumber(_0xe1bd(_C))or 1);_ptrcb7e[_A]=(tonumber(_0xe1bd(_B))or 0)/(_d==0 and 1 or _d)
 end
 _H[13]=function(_A,_B,_C)
-_ptrcb7e[_A]=_0xe1bd(_B)%_0xe1bd(_C)
+local _m=(tonumber(_0xe1bd(_C))or 1);_ptrcb7e[_A]=(tonumber(_0xe1bd(_B))or 0)%(_m==0 and 1 or _m)
 end
 _H[14]=function(_A,_B,_C)
-_ptrcb7e[_A]=_0xe1bd(_B)^_0xe1bd(_C)
+_ptrcb7e[_A]=(tonumber(_0xe1bd(_B))or 0)^(tonumber(_0xe1bd(_C))or 0)
 end
 _H[15]=function(_A,_B,_C)
 _ptrcb7e[_A]=-_ptrcb7e[_B]
@@ -130,19 +132,19 @@ _H[19]=function(_A,_B,_C)
 local _SBX=_B*256+_C-32767;_r1207=_r1207+_SBX
 end
 _H[20]=function(_A,_B,_C)
-if(_0xe1bd(_B)==_0xe1bd(_C))~=(_A~=0)then _r1207=_r1207+1 end
+local _vB,_vC=_0xe1bd(_B),_0xe1bd(_C);if(_vB==_vC)~=(_A~=0)then _r1207=_r1207+1 end
 end
 _H[21]=function(_A,_B,_C)
-if(_0xe1bd(_B)<_0xe1bd(_C))~=(_A~=0)then _r1207=_r1207+1 end
+local _vB,_vC=_0xe1bd(_B),_0xe1bd(_C);if _vB~=nil and _vC~=nil and (_vB<_vC)~=(_A~=0)then _r1207=_r1207+1 end
 end
 _H[22]=function(_A,_B,_C)
-if(_0xe1bd(_B)<=_0xe1bd(_C))~=(_A~=0)then _r1207=_r1207+1 end
+local _vB,_vC=_0xe1bd(_B),_0xe1bd(_C);if _vB~=nil and _vC~=nil and (_vB<=_vC)~=(_A~=0)then _r1207=_r1207+1 end
 end
 _H[23]=function(_A,_B,_C)
 if(_ptrcb7e[_A]~=false and _ptrcb7e[_A]~=nil)~=(_C~=0)then _r1207=_r1207+1 end
 end
 _H[24]=function(_A,_B,_C)
-local _FN=_ptrcb7e[_A];local _ARGS={};local _NB=_B==0 and _TOP-_A or _B-1;for _i=1,_NB do _ARGS[_i]=_ptrcb7e[_A+_i]end;local _NC2=_C-1;if _NC2==0 then _FN(_v4b06(_ARGS))elseif _NC2==1 then _ptrcb7e[_A]=_FN(_v4b06(_ARGS))else local _RES=_va95e(_FN(_v4b06(_ARGS)));for _i=0,_NC2-1 do _ptrcb7e[_A+_i]=_RES[_i+1]end;_TOP=_A+_NC2-1 end
+local _FN=_ptrcb7e[_A];if type(_FN)~="function" then return end;local _ARGS={};local _NB=_B==0 and _TOP-_A or _B-1;for _i=1,_NB do _ARGS[_i]=_ptrcb7e[_A+_i]end;local _NC2=_C-1;if _NC2==0 then _FN(_v4b06(_ARGS))elseif _NC2==1 then _ptrcb7e[_A]=_FN(_v4b06(_ARGS))else local _RES=_va95e(_FN(_v4b06(_ARGS)));for _i=0,_NC2-1 do _ptrcb7e[_A+_i]=_RES[_i+1]end;_TOP=_A+_NC2-1 end
 end
 _H[25]=function(_A,_B,_C)
 if _B==1 then return end;local _RET={};for _i=0,_B-2 do _RET[_i+1]=_ptrcb7e[_A+_i]end;return _v4b06(_RET)
@@ -157,7 +159,7 @@ _H[28]=function(_A,_B,_C)
 local _BASE=(_C-1)*50;for _i=1,_B do _ptrcb7e[_A][_BASE+_i]=_ptrcb7e[_A+_i]end
 end
 _H[29]=function(_A,_B,_C)
-_ptrcb7e[_A+1]=_ptrcb7e[_B];_ptrcb7e[_A]=_ptrcb7e[_B][_0xe1bd(_C)]
+local _o=_ptrcb7e[_B];if type(_o)=="table" or type(_o)=="userdata" then _ptrcb7e[_A+1]=_o;_ptrcb7e[_A]=_o[_0xe1bd(_C)]else _ptrcb7e[_A+1]=nil;_ptrcb7e[_A]=nil end
 end
 _H[30]=function(_A,_B,_C)
 _ptrcb7e[_A]=_r5b1c[_0xe1bd(_C)]
