@@ -1,7 +1,7 @@
 -- Protected by Advanced Obfuscator v3.1 FIXED
 local _BC="\68\86\77\33\2\0\0\0\243\5\0\0\0\172\66\114\89\128\172\7\0\0\0\125\125\89\149\214\137\193\5\16\0\20\13\30\26\27\25\15\1\18\10\7\2\23\24\17\28\4\12\19\11\8\29\22\9\3\6\21\14\3\0\0\0\253\175\251\172\225\193\45\16\46\236\178\251\70\65\243\198\203\177\237\14\215\118\1\180\94\220\112\145\104\71\6\127\185\115\209\54\91\114\181\16\245\183\147\177"
 local _KEY="\240\175\251\172\236\192\45\17\56\236\179\251\178\34\241\145\243\84\189\70\26\136\164\203\72\121\137\39\100\188\28\9"
-local _CS=18178547667826033885
+local _CS=1783559221
 (function(_D,_K,_C)
 if not(_C and type(_C)=="number")then return end
 local _data={}
@@ -10,10 +10,9 @@ local _key={}
 for _i=1,#_K do _key[_i]=_K:byte(_i)end
 local _t=os.clock();local _x=0;for _i=1,10000 do _x=_x+_i end
 if os.clock()-_t>0.1 then return end
-local _h=0xcbf29ce484222325
+local _h=0x811c9dc5
 for _i=1,#_data do
-_h=(_h~_data[_i])*0x100000001b3
-_h=_h&0xFFFFFFFFFFFFFFFF
+_h=((_h*0x01000193)%0x100000000)~_data[_i]
 end
 if _h~=_C then return end
 local _P=1
@@ -130,7 +129,7 @@ _H[19]=function(_A,_B,_C)
 local _SBX=_B*256+_C-32767;_r1207=_r1207+_SBX
 end
 _H[20]=function(_A,_B,_C)
-if(_0xe1bd(_B)==_0xe1bd(_C))~=(_A~=0)then _rQ1207=_r1207+1 end
+if(_0xe1bd(_B)==_0xe1bd(_C))~=(_A~=0)then _r1207=_r1207+1 end
 end
 _H[21]=function(_A,_B,_C)
 if(_0xe1bd(_B)<_0xe1bd(_C))~=(_A~=0)then _r1207=_r1207+1 end
