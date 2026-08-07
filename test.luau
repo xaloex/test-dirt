@@ -5,6 +5,13 @@ local _KEY="\240\175\251\172\236\192\45\17\56\236\179\251\178\34\241\145\243\84\
 local _CS=2765046689
 (function(_D,_K,_C)
 if not(_C and type(_C)=="number")then return end
+local _xor;if bit32 then _xor=bit32.bxor else _xor=function(a,b)
+local r,m,s,t=0,2^31
+while a>0 or b>0 do
+s=a%2;t=b%2
+if s~=t then r=r+m end
+a=math.floor(a/2);b=math.floor(b/2);m=m/2
+end;return r end end
 local _strbyte = (string and string.byte) or function(s,i) return s:byte(i) end
 local _strchar = (string and string.char) or function(c) return "" end
 local _ldexp = (math and math.ldexp) or function(m,e) return m * (2^e) end
@@ -16,9 +23,9 @@ local _key={}
 for _i=1,#_K do _key[_i]=_strbyte(_K,_i)end
 local _t=_clock();local _x=0;for _i=1,10000 do _x=_x+_i end
 if _clock()-_t>0.5 then return end
-local _h=0x811c9dc5
+local _h=2166136261
 for _i=1,#_data do
-_h=((_h*0x01000193)%0x100000000)~_data[_i]
+_h=_xor((_h*16777619)%4294967296,_data[_i])
 end
 if _h~=_C then return end
 local _P=1
@@ -34,12 +41,12 @@ local _r3623={}
 local _nc=_r6069()
 for _i=1,_nc do
 local _ci=_i-1;local _xk=_key[(_ci%32)+1]
-local _t=_data83c5()~_xk
+local _t=_xor(_data83c5(),_xk)
 if _t==0 then _r3623[_i]=nil
 elseif _t==1 then _r3623[_i]=_data83c5()~=0
 elseif _t==2 then
 local _bs={}
-for _j=1,8 do _bs[_j]=_data83c5()~_key[((_ci+_j)%32)+1]end
+for _j=1,8 do _bs[_j]=_xor(_data83c5(),_key[((_ci+_j)%32)+1])end
 local _b8=_bs[8];local _b7=_bs[7]
 local _sg=math.floor(_b8/128)%2
 local _ex=(_b8%128)*16+math.floor(_b7/16)
@@ -52,7 +59,7 @@ _r3623[_i]=_sg==1 and -_v or _v
 elseif _t==3 then
 local _sl=_r6069()
 local _sb={}
-for _j=1,_sl do _sb[_j]=_strchar(_data83c5()~_key[((_ci+_j+4)%32)+1])end
+for _j=1,_sl do _sb[_j]=_strchar(_xor(_data83c5(),_key[((_ci+_j+4)%32)+1]))end
 _r3623[_i]=_tmpca98(_sb)
 end
 end
@@ -172,11 +179,11 @@ end
 while _r1207<=_ni do
 local _ii=_r1207-1
 _P=_istart+_ii*4
-local _ro=_data83c5()~_key[(_ii*4%32)+1]
+local _ro=_xor(_data83c5(),_key[(_ii*4%32)+1])
 local _op=_OSH[_ro]
-local _A=_data83c5()~_key[((_ii*4+1)%32)+1]
-local _B=_data83c5()~_key[((_ii*4+2)%32)+1]
-local _C=_data83c5()~_key[((_ii*4+3)%32)+1]
+local _A=_xor(_data83c5(),_key[((_ii*4+1)%32)+1])
+local _B=_xor(_data83c5(),_key[((_ii*4+2)%32)+1])
+local _C=_xor(_data83c5(),_key[((_ii*4+3)%32)+1])
 _r1207=_r1207+1
 if _H[_op]then _H[_op](_A,_B,_C)end
 end
